@@ -9,7 +9,7 @@ class Masyarakat extends Authenticatable {
     use HasFactory;
 
     protected $table = 'tb_masyarakat';
-    protected $primaryKey = 'id_user'; 
+    protected $primaryKey = 'id';
     protected $fillable = ['nama_lengkap', 'username', 'password', 'telp'];
-    protected $hidden = ['password']; 
+    protected $hidden = ['password'];
 }

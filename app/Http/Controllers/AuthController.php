@@ -15,22 +15,24 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-        ]);
+{
+    $credentials = $request->validate([
+        'username' => 'required',
+        'password' => 'required',
+    ]);
 
-        $user = Masyarakat::where('username', $request->username)->first();
+    $user = Masyarakat::where('username', $request->username)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user);
-            $request->session()->regenerate();
-            return redirect()->intended('/');
-        }
-
+    if (!$user || !Hash::check($request->password, $user->password)) {
         return back()->withErrors(['login' => 'Username atau password salah.'])->withInput();
     }
+
+    Auth::login($user); // Login manual pakai model
+    $request->session()->regenerate();
+
+    return redirect()->intended('/');
+}
+
 
     public function showRegisterForm()
     {
@@ -57,13 +59,15 @@ class AuthController extends Controller
             return back()->withErrors(['register' => 'Gagal menyimpan data!']);
         }
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);
+        $request->session()->regenerate();
+
         return redirect('/');
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
