@@ -26,7 +26,7 @@ class AuthController extends Controller
     if (!$user || !Hash::check($request->password, $user->password)) {
         return back()->withErrors(['login' => 'Username atau password salah.'])->withInput();
     }
-
+    
     Auth::login($user); // Login manual pakai model
     $request->session()->regenerate();
 
